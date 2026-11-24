@@ -1,8 +1,10 @@
 import requests
 import pathlib
+import zipfile
 
 URL = "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsas/ca/ca-2026-01.zip"
 DESTINO = "data/anp/zip"
+PASTA_CSV = "data/anp/csv"
 
 def baixar(url: str, pasta: str) -> None:
     pathlib.Path(pasta).mkdir(parents=True, exist_ok=True)
@@ -21,5 +23,14 @@ def baixar(url: str, pasta: str) -> None:
 
     print(f"salvo em {arquivo}")
 
+def extrair(zip_path, pasta_csv: str) -> None:
+    pathlib.Path(pasta_csv).mkdir(parents=True, exist_ok=True)
+
+    with zipfile.ZipFile(zip_path) as z:
+        z.extractall(pasta_csv)
+        print(f"extraído em {pasta_csv}: {z.namelist()}")
+
 if __name__ == "__main__":
     baixar(URL, DESTINO)
+
+extrair(pathlib.Path(DESTINO) / pathlib.Path(URL).name, PASTA_CSV)
