@@ -5,11 +5,15 @@ URL = "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/
 DESTINO = "data/anp/zip"
 
 def baixar(url: str, pasta: str) -> None:
-    pathlib.Path(pasta).mkdir(parents=True, exist_ok=True) #verifica se a pasta já existe
-    resp = requests.get(url, stream=True, timeout=60)
-
-    resp.raise_for_status()
+    pathlib.Path(pasta).mkdir(parents=True, exist_ok=True)
     arquivo = pathlib.Path(pasta) / pathlib.Path(url).name
+
+    if arquivo.exists():
+        print(f"já existe: {arquivo}")
+        return
+
+    resp = requests.get(url, stream=True, timeout=60)
+    resp.raise_for_status()
 
     with open(arquivo, "wb") as f:
         for pedaco in resp.iter_content(chunk_size=1024 * 1024):
